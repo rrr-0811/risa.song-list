@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Milm｜うたえる曲リスト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     🎨 色・フォント設定はここだけ触ればOK
+     bg=背景（白い部分） / navy=カード（トピック・ボタン）
+     ========================================================= */
+  :root{
+    --bg:#f5f6fa; --ink:#16233d; --ink-soft:#5b6884; --line:#e3e6ef;
+    --navy:#16233d; --navy-2:#20325a; --navy-3:#2a3f6d;
+    --white:#f4f7fc; --muted:#9aa8c6; --line-n:rgba(255,255,255,.14);
+    --font-brand:"Poppins",sans-serif; --font-body:"Zen Kaku Gothic New",sans-serif; --font-mono:"Space Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.7;min-height:100vh}
+  .wrap{max-width:600px;margin:0 auto;padding:0 18px 64px}
+
+  /* ヘッダー */
+  header{padding:44px 0 8px;text-align:center}
+  .logo{display:inline-flex;align-items:center;gap:13px;margin-bottom:4px}
+  .logo svg{width:44px;height:44px;flex-shrink:0}
+  .wordmark{font-family:var(--font-brand);font-weight:700;font-size:40px;letter-spacing:.06em;color:var(--ink);line-height:1}
+  .filmmusic{font-family:var(--font-mono);font-size:11px;letter-spacing:.42em;color:var(--ink-soft);text-transform:uppercase;margin-top:12px}
+  .tagline{color:var(--ink-soft);font-size:13.5px;margin-top:14px;letter-spacing:.06em}
+  .howto{margin-top:20px;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink);letter-spacing:.02em;background:#fff;border:1px solid var(--line);padding:9px 16px;border-radius:999px;box-shadow:0 2px 10px rgba(22,35,61,.05)}
+  .howto b{color:var(--ink);font-weight:700}
+
+  /* 見出し */
+  section{margin-top:38px}
+  .sec-head{display:flex;align-items:baseline;gap:11px;margin-bottom:15px}
+  .sec-title{font-family:var(--font-body);font-weight:700;font-size:18px;letter-spacing:.08em;color:var(--ink)}
+  .sec-count{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);letter-spacing:.05em}
+  .eyebrow{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
+
+  /* ① 曲ガチャ */
+  .gacha{background:var(--navy);border-radius:20px;padding:24px 20px 26px;position:relative;overflow:hidden;box-shadow:0 8px 26px rgba(22,35,61,.16)}
+  .gacha::before{content:"";position:absolute;top:-60%;left:50%;transform:translateX(-50%);width:70%;height:150%;background:radial-gradient(50% 50% at 50% 0%, rgba(255,255,255,.12), transparent 70%);opacity:0;transition:opacity .4s;pointer-events:none}
+  .gacha.lit::before{opacity:1}
+  .gacha-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.24em;color:var(--muted);text-transform:uppercase;text-align:center}
+  .gacha-stage{min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;margin:14px 0 18px}
+  .gacha-song{font-family:var(--font-body);font-weight:700;font-size:clamp(21px,6vw,26px);letter-spacing:.04em;line-height:1.3;color:var(--white);transition:transform .1s}
+  .gacha-song.spin{color:var(--muted)}
+  .gacha-song.hit{color:var(--white);text-shadow:0 0 22px rgba(255,255,255,.4);animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+  @keyframes pop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  .gacha-artist{font-size:12.5px;color:var(--muted);margin-top:6px;min-height:18px;letter-spacing:.04em}
+  .gacha-btns{display:flex;gap:10px;justify-content:center}
+  .btn{font-family:var(--font-body);font-weight:700;font-size:15px;letter-spacing:.05em;border:none;border-radius:13px;padding:13px 22px;cursor:pointer;transition:transform .12s,filter .2s}
+  .btn:active{transform:translateY(1px) scale(.98)}
+  .btn-primary{background:var(--white);color:var(--navy)}
+  .btn-primary:hover{filter:brightness(.96)}
+  .btn-ghost{background:var(--navy-2);color:var(--white);border:1px solid var(--line-n);display:none}
+  .btn-ghost.show{display:inline-block}
+
+  /* ② オリジナル曲 */
+  .original{margin-top:38px}
+  .original h2{font-family:var(--font-brand);font-weight:700;font-size:23px;letter-spacing:.05em;color:var(--ink);display:flex;align-items:center;gap:10px}
+  .original .eyebrow{color:var(--ink-soft)}
+  .original .lead{color:var(--ink-soft);font-size:13px;margin:8px 0 18px;letter-spacing:.03em}
+  .orig-group{display:flex;align-items:center;gap:12px;margin:22px 0 11px}
+  .orig-group .gname{font-family:var(--font-brand);font-weight:700;letter-spacing:.05em}
+  .orig-group .line{flex:1;height:1px;background:var(--line)}
+  .orig-group.main .gname{font-size:19px;color:var(--ink)}
+  .orig-group.main .badge{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.18em;color:var(--white);background:var(--navy);border-radius:6px;padding:3px 8px;text-transform:uppercase}
+  .orig-group.solo .gname{font-size:15px;color:var(--ink-soft)}
+  .orig-grid{display:flex;flex-direction:column;gap:10px}
+  .orig-chip{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;border-radius:15px;padding:16px;transition:transform .12s,background .2s,border-color .2s;font-family:inherit}
+  .orig-chip .no{font-family:var(--font-mono);font-size:12px;min-width:22px;flex-shrink:0}
+  .orig-chip .meta{flex:1;min-width:0}
+  .orig-chip .t{font-weight:700;font-size:15.5px;letter-spacing:.03em}
+  .orig-chip .n{font-size:11.5px;letter-spacing:.03em}
+  .orig-chip .send{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;border-radius:8px;padding:6px 11px;flex-shrink:0;font-weight:700}
+  .orig-chip.main{background:var(--navy);border:none;color:var(--white);box-shadow:0 4px 16px rgba(22,35,61,.14)}
+  .orig-chip.main:hover{background:var(--navy-3);transform:translateY(-2px)}
+  .orig-chip.main .no{color:var(--muted)} .orig-chip.main .t{color:var(--white)} .orig-chip.main .n{color:var(--muted)}
+  .orig-chip.main .send{color:var(--navy);background:var(--white)}
+  .orig-chip.solo{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .orig-chip.solo:hover{border-color:var(--navy);transform:translateY(-2px)}
+  .orig-chip.solo .no{color:var(--ink-soft)} .orig-chip.solo .t{color:var(--ink)} .orig-chip.solo .n{color:var(--ink-soft)}
+  .orig-chip.solo .send{color:var(--navy);background:#eef0f6}
+  .orig-chip:active{transform:translateY(0)}
+
+  /* ③ 十八番 */
+  .fav-grid{display:flex;flex-wrap:wrap;gap:9px}
+  .fav-chip{background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px 14px;cursor:pointer;display:flex;flex-direction:column;gap:1px;transition:transform .12s,border-color .2s;font-family:inherit;color:inherit;text-align:left}
+  .fav-chip:hover{border-color:var(--navy);transform:translateY(-2px)}
+  .fav-chip:active{transform:translateY(0)}
+  .fav-chip .t{font-weight:700;font-size:14px;letter-spacing:.03em;color:var(--ink)}
+  .fav-chip .a{font-size:11px;color:var(--ink-soft);font-family:var(--font-mono);letter-spacing:.03em}
+
+  /* ④ カバー曲リスト */
+  .search-box{position:relative;margin-bottom:16px}
+  .search-box svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--ink-soft);opacity:.7}
+  #search{width:100%;font-family:var(--font-body);font-size:15px;letter-spacing:.03em;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px 14px 44px;outline:none;transition:border-color .2s}
+  #search::placeholder{color:var(--ink-soft)}
+  #search:focus{border-color:var(--navy)}
+  .list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+  .cv-group{display:flex;align-items:center;gap:11px;padding:15px 16px 9px;background:#fbfcfe}
+  .cv-group.first{border-top:none}
+  .cv-group:not(.first){border-top:1px solid var(--line)}
+  .cv-artist{font-family:var(--font-brand);font-weight:700;font-size:13px;letter-spacing:.05em;color:var(--ink);white-space:nowrap}
+  .cv-group .line{flex:1;height:1px;background:var(--line)}
+  .row{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;transition:background .15s;text-align:left;width:100%;background:none;font-family:inherit;color:inherit}
+  .row:hover{background:#eef0f6}
+  .row .note{color:var(--ink-soft);opacity:.55;flex-shrink:0;font-size:12px}
+  .row .meta{flex:1;min-width:0}
+  .row .title{font-weight:500;font-size:15px;letter-spacing:.02em;color:var(--ink);display:flex;align-items:center;gap:7px}
+  .row .title .star{color:#c9a94a;font-size:11px;flex-shrink:0}
+  .row .copy-ic{opacity:0;color:var(--ink-soft);flex-shrink:0;transition:opacity .15s}
+  .row:hover .copy-ic{opacity:.7}
+  .empty{padding:32px 16px;text-align:center;color:var(--ink-soft);font-size:14px}
+
+  footer{margin-top:44px;text-align:center;color:var(--ink-soft);font-size:12px;line-height:2}
+  footer .mono{font-family:var(--font-mono);letter-spacing:.24em;font-size:10px;opacity:.8}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:var(--white);font-weight:700;font-size:14px;letter-spacing:.03em;padding:13px 22px;border-radius:14px;box-shadow:0 8px 30px rgba(22,35,61,.3);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.2,1,.4,1);z-index:50;display:flex;align-items:center;gap:8px}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">
+      <svg viewBox="0 0 48 48" fill="none" stroke="#16233d" stroke-width="2.4">
+        <rect x="3" y="3" width="42" height="42" rx="9"/><circle cx="24" cy="24" r="13"/><circle cx="24" cy="24" r="4.2"/>
+        <circle cx="24" cy="24" r="1" fill="#16233d" stroke="none"/><line x1="33.5" y1="15" x2="27" y2="21.5" stroke-linecap="round"/>
+        <circle cx="10.5" cy="37.5" r="1.4" fill="#16233d" stroke="none"/>
+      </svg>
+      <span class="wordmark">MILM.</span>
+    </div>
+    <div class="filmmusic">Film &times; Music</div>
+    <p class="tagline">人生のワンシーンを、ここに。</p>
+    <div class="howto">曲名を<b>タップ</b>でコピー → コメントに貼ってね</div>
+  </header>
+
+  <section style="margin-top:32px">
+    <div class="gacha" id="gacha">
+      <div class="gacha-label">▸ 今日、なにうたう？</div>
+      <div class="gacha-stage"><div class="gacha-song" id="gachaSong">ボタンを押してね</div><div class="gacha-artist" id="gachaArtist"></div></div>
+      <div class="gacha-btns"><button class="btn btn-primary" id="rollBtn">🎲 曲ガチャ</button><button class="btn btn-ghost" id="copyRoll">結果をコピー</button></div>
+    </div>
+  </section>
+
+  <div class="original">
+    <span class="eyebrow">Milm Original</span>
+    <h2>🎵 オリジナル曲</h2>
+    <p class="lead">聴きたいオリジナルをタップ → コメントに貼ってリクエストしてね。</p>
+    <div class="orig-grid" id="origGrid"></div>
+  </div>
+
+  <section id="favSec">
+    <div class="sec-head"><span class="sec-title">🌟 十八番（得意曲）</span><span class="sec-count" id="favCount"></span></div>
+    <div class="fav-grid" id="favGrid"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-title">🔍 カバー曲リスト</span><span class="sec-count" id="listCount"></span></div>
+    <div class="search-box">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+      <input id="search" type="text" placeholder="曲名・アーティストで検索" autocomplete="off" />
+    </div>
+    <div class="list" id="songList"></div>
+  </section>
+
+  <footer><div>MILM &mdash; Film &times; Music ／ Zepp 2030</div><div class="mono">TAP TO COPY・REQUEST WELCOME</div></footer>
+</div>
+
+<div class="toast" id="toast">✓ コピーしたよ！コメントに貼ってね</div>
+
+<script>
+/* =========================================================
+   🎵 オリジナル曲（②・選択式）★Milm.が上・目立つ
+   ※ サンプル。実際の曲名に置き換えてね
+   ========================================================= */
+const ORIGINALS = [
+  { group:"Milm.", type:"main", badge:"BAND", songs:[
+    "愛とか恋とか","彩","くだらないに乾杯を","美しい！","当たり前","髪留め","同窓会","バンドマン","世界最後の夜に","運命","不純","イヤホン","メロウに歌う"
+  ] },
+  { group:"risa.", type:"solo", songs:[
+    "未練なんていらない","君の街","特別","灰被り姫","シたい。","理由","残り香","別れよ、","もしも君がいなくなったら","雲","杖","卒業","終電","再愛","わがまま","のこりもの","suki","夏夜","オリオン座","お隣さん"
+  ] },
+];
+
+/* =========================================================
+   🎤 カバー曲（アーティスト別）
+   ・十八番にしたい曲は "曲名" を {t:"曲名",fav:true} に変えてね
+   ========================================================= */
+const COVERS = [
+  { artist:"コレサワ", songs:[{t:"たばこ",fav:true},"恋人失格","SSW","あたしを彼女にしたいなら","ショートカットに憧れてる","最後の彼女になりたかった","失恋ソングを歌ったあとに","彼氏はいません今夜だけ","この恋はスクープされない","元彼女のみなさまへ"] },
+  { artist:"wacci", songs:["別の人の彼女になったよ"] },
+  { artist:"My Hair is Bad", songs:["真赤","化粧","味方"] },
+  { artist:"RADWIMPS", songs:["スパークル","なんでもないや","前前前世","そっけない","正解"] },
+  { artist:"reGretGirl", songs:["ホワイトアウト"] },
+  { artist:"平井大", songs:["Stand by me, Stand by you","また逢う日まで"] },
+  { artist:"ヨルシカ", songs:["ただ君に晴れ","晴る","花に亡霊","だから僕は音楽を辞めた","ヒッチコック"] },
+  { artist:"優里", songs:["ドライフラワー","桜晴れ","シャッター","ベテルギウス"] },
+  { artist:"クリープハイプ", songs:["おやすみ鳴き声","大丈夫","exダーリン","栞"] },
+  { artist:"いきものがかり", songs:[{t:"コイスルオトメ",fav:true}] },
+  { artist:"マカロニえんぴつ", songs:["恋人ごっこ","ブルーベリー・ナイツ","なんでもないよ、"] },
+  { artist:"Vaundy", songs:["怪獣の花唄","napori"] },
+  { artist:"Saucy Dog", songs:["いつか","シンデレラボーイ","今更だって僕はいうかな","結","魔法にかけられて","ああ、もう。","コンタクトケース","雀ノ欠伸","煙"] },
+  { artist:"Aimer", songs:["カタオモイ","残響散歌","コイワズライ","蝶々結び"] },
+  { artist:"ねぐせ。", songs:["日常革命","グットな音楽を"] },
+  { artist:"にしな", songs:["ヘビースモーク","ダーリン","もも","真白"] },
+  { artist:"Hump Back", songs:["拝啓、少年よ","僕らは今日も電車の中"] },
+  { artist:"35.7", songs:["祝日天国"] },
+  { artist:"Mrs. GREEN APPLE", songs:["青と夏","ダーリン","点描の唄"] },
+  { artist:"ずっと真夜中でいいのに。", songs:["秒針を噛む"] },
+  { artist:"ハンブレッダーズ", songs:["銀河高速","ファイナルボーイフレンド"] },
+  { artist:"WANIMA", songs:["シグナル","ともに","やってみよう"] },
+  { artist:"幾田りら", songs:["スパークル"] },
+  { artist:"Conton Candy", songs:["ロングスカートは靡いて","ファジーネーブル"] },
+  { artist:"aiko", songs:["カブトムシ","花火","Kiss Hug","ボーイフレンド","ストロー","えりあし"] },
+  { artist:"絢香", songs:["にじいろ","手をつなごう"] },
+  { artist:"リーガルリリー", songs:["リッケンバッカー"] },
+];
+/* ========================================================= */
+
+const $ = s => document.querySelector(s);
+const getT = s => (typeof s === "string" ? s : s.t);
+const getFav = s => (typeof s === "string" ? false : !!s.fav);
+
+/* フラット化（ガチャ・十八番用） */
+const allCovers = [];
+COVERS.forEach(g => g.songs.forEach(s => allCovers.push({ title:getT(s), artist:g.artist, fav:getFav(s) })));
+
+/* ② オリジナル */
+$("#origGrid").innerHTML = ORIGINALS.map(g => {
+  const label = `<div class="orig-group ${g.type}"><span class="gname">${esc(g.group)}</span>${g.badge?`<span class="badge">${esc(g.badge)}</span>`:""}<span class="line"></span></div>`;
+  const chips = g.songs.map((title,i) => `
+    <button class="orig-chip ${g.type}" data-copy="${enc('【オリジナルリクエスト】'+title+'（'+g.group+'）')}">
+      <span class="no">${String(i+1).padStart(2,"0")}</span>
+      <span class="meta"><span class="t">${esc(title)}</span><span class="n">${esc(g.group)}</span></span>
+      <span class="send">送る</span>
+    </button>`).join("");
+  return label + chips;
+}).join("");
+
+/* ③ 十八番 */
+const favs = allCovers.filter(s => s.fav);
+$("#favCount").textContent = `${favs.length}曲`;
+$("#favSec").style.display = favs.length ? "" : "none";
+$("#favGrid").innerHTML = favs.map(s => `<button class="fav-chip" data-copy="${enc(s.title)}"><span class="t">${esc(s.title)}</span><span class="a">${esc(s.artist)}</span></button>`).join("");
+
+/* ④ カバー曲リスト（アーティスト別＋検索） */
+const listEl = $("#songList");
+let query = "";
+function render(){
+  const q = query.trim().toLowerCase();
+  let count = 0, html = "", first = true;
+  COVERS.forEach(g => {
+    const artistMatch = g.artist.toLowerCase().includes(q);
+    const songs = g.songs.filter(s => !q || artistMatch || getT(s).toLowerCase().includes(q));
+    if(!songs.length) return;
+    count += songs.length;
+    html += `<div class="cv-group ${first?'first':''}"><span class="cv-artist">${esc(g.artist)}</span><span class="line"></span></div>`;
+    first = false;
+    html += songs.map(s => {
+      const t = getT(s), fav = getFav(s);
+      return `<button class="row" data-copy="${enc(t)}">
+        <span class="note">♪</span>
+        <span class="meta"><span class="title">${fav?'<span class="star">★</span>':''}${esc(t)}</span></span>
+        <span class="copy-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></span>
+      </button>`;
+    }).join("");
+  });
+  $("#listCount").textContent = `全${allCovers.length}曲`;
+  listEl.innerHTML = count ? html : `<div class="empty">「${esc(query)}」は見つからなかった🥲<br>別のキーワードで探してみてね</div>`;
+}
+render();
+
+document.body.addEventListener("click", e => { const el = e.target.closest("[data-copy]"); if(el) copyText(decodeURIComponent(el.dataset.copy)); });
+$("#search").addEventListener("input", e => { query = e.target.value; render(); });
+
+/* ① 曲ガチャ */
+const rollBtn=$("#rollBtn"), gachaSong=$("#gachaSong"), gachaArtist=$("#gachaArtist"), copyRoll=$("#copyRoll"), gacha=$("#gacha");
+let current=null, rolling=false;
+rollBtn.addEventListener("click", () => {
+  if(rolling || !allCovers.length) return;
+  rolling=true; gacha.classList.add("lit");
+  gachaSong.classList.remove("hit"); gachaSong.classList.add("spin");
+  gachaArtist.textContent=""; copyRoll.classList.remove("show"); rollBtn.textContent="🎲 抽選中…";
+  let ticks=0; const total=16+Math.floor(Math.random()*6); let delay=55;
+  const step=()=>{
+    const s=allCovers[Math.floor(Math.random()*allCovers.length)];
+    gachaSong.textContent=s.title; ticks++;
+    if(ticks>=total){
+      current=s; gachaSong.classList.remove("spin"); gachaSong.classList.add("hit");
+      gachaSong.textContent=s.title; gachaArtist.textContent=s.artist+(s.fav?"  ★十八番":"");
+      copyRoll.classList.add("show"); rollBtn.textContent="🎲 もう一回"; rolling=false; return;
+    }
+    delay*=1.11; setTimeout(step,delay);
+  };
+  step();
+});
+copyRoll.addEventListener("click", () => { if(current) copyText(current.title); });
+
+function copyText(text){
+  const done=()=>showToast();
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done).catch(()=>fallback(text,done)); }
+  else fallback(text,done);
+}
+function fallback(text,cb){ const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy")}catch(e){} document.body.removeChild(ta); cb(); }
+let toastTimer;
+function showToast(){ const t=$("#toast"); t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),1800); }
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function enc(s){return encodeURIComponent(s);}
+</script>
+</body>
+</html>
